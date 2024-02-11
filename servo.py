@@ -8,21 +8,25 @@ def setup_servo(pin):
 
 def move_servo(servo, angle):
     duty = angle / 18 + 2
-    servo.start(duty)
+    servo.ChangeDutyCycle(duty)
     time.sleep(1)
-    servo.stop()
 
 if __name__ == "__main__":
     try:
         servo_pin = 6  # Assuming servo is connected to GPIO pin 6
         servo = setup_servo(servo_pin)
+        if servo is None:
+            print("Error: Unable to setup servo.")
+            exit()
+
+        servo.start(0)  # Start at 0 degrees
 
         while True:
-            # Move servo to left (0 degrees)
+            print("Moving servo to left (0 degrees)...")
             move_servo(servo, 0)
             time.sleep(1)
 
-            # Move servo to right (180 degrees)
+            print("Moving servo to right (180 degrees)...")
             move_servo(servo, 180)
             time.sleep(1)
 
