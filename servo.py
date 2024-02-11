@@ -1,21 +1,37 @@
 import RPi.GPIO as GPIO
+import time
 
-def get_used_pins():
-    used_pins = []
-    GPIO.setmode(GPIO.BCM)  # Set pin numbering scheme to BCM
-    for pin in range(2, 28):  # Assuming Raspberry Pi 3 GPIO pins
-        try:
-            GPIO.setup(pin, GPIO.IN)
-            used_pins.append(pin)
-        except RuntimeError:
-            pass  # Pin already in use
-    GPIO.cleanup()  # Clean up GPIO settings
-    return used_pins
+def setup_servo(pin):
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(pin, GPIO.OUT)
+    return GPIO.PWM(pin, 50)  # PWM frequency: 50Hz
+
+def move_servo(servo, angle):
+    duty = angle / 18 + 2
+    servo.start(duty)
+    time.sleep(1)
+    servo.stop()
 
 if __name__ == "__main__":
-    used_pins = get_used_pins()
-    if used_pins:
-        print("The following GPIO pins are being used:")
-        print(used_pins)
-    else:
-        print("No GPIO pins are currently in use.")
+    try:
+        servo_pin = 6  # Assuming servo is connected to GPIO pin 6
+        servo = setup_servo(servo_pin)
+
+        # Move servo to 0 degrees
+        move_servo(servo, 0)
+        time.sleep(1)
+
+        # Move servo to 90 degrees
+        move_servo(servo, 90)
+        time.sleep(1)
+
+        # Move servo to 180 degrees
+        move_servo(servo, 180)
+        time.sleep(1)
+
+    except KeyboardInterrupt:
+        servo.stop()
+        GPIO.cleanup()
+    except Exception as e:
+        print("Error:", e)
+        GPIO.cleanup()
