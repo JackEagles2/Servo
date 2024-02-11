@@ -2,17 +2,20 @@ import RPi.GPIO as GPIO
 from time import sleep
 import requests  # Import the requests library to make HTTP requests
 
+print("Setup")
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
 p = GPIO.PWM(11, 50)
 p.start(0)
+print("Starting")
 
 # Function to get PID controller output from endpoint
 def get_pid_output():
     # Replace "PID_ENDPOINT_URL" with the actual endpoint URL
+    print("Finding endpoint")
     endpoint_url = "http://192.168.0.91:5000/get_pid_output"
-"
     try:
+        print("Getting response")
         response = requests.get(endpoint_url)
         print("getting response")
         if response.status_code == 200:
@@ -45,4 +48,4 @@ try:
 except KeyboardInterrupt:
     p.stop()
     GPIO.cleanup()
-Resets the GPIO pins back to defaults
+#Resets the GPIO pins back to defaults
