@@ -17,17 +17,14 @@ if __name__ == "__main__":
         servo_pin = 6  # Assuming servo is connected to GPIO pin 6
         servo = setup_servo(servo_pin)
 
-        # Move servo to 0 degrees
-        move_servo(servo, 0)
-        time.sleep(1)
+        while True:
+            # Move servo to left (0 degrees)
+            move_servo(servo, 0)
+            time.sleep(1)
 
-        # Move servo to 90 degrees
-        move_servo(servo, 90)
-        time.sleep(1)
-
-        # Move servo to 180 degrees
-        move_servo(servo, 180)
-        time.sleep(1)
+            # Move servo to right (180 degrees)
+            move_servo(servo, 180)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         servo.stop()
