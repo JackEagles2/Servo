@@ -1,12 +1,12 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from time import sleep
 import requests  # Import the requests library to make HTTP requests
 
 print("Setup")
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
-p = GPIO.PWM(11, 50)
-p.start(0)
+#GPIO.setmode(GPIO.BOARD)
+#GPIO.setup(11, GPIO.OUT)
+#p = GPIO.PWM(11, 50)
+#p.start(0)
 print("Starting")
 
 # Function to get PID controller output from endpoint
@@ -39,13 +39,13 @@ try:
             # Ensure scaled output is within valid range
             scaled_output = max(0, min(100, scaled_output))
 
-            p.ChangeDutyCycle(scaled_output)
+            #p.ChangeDutyCycle(scaled_output)
             sleep(0.1)  # Adjust sleep time as needed for responsiveness
         else:
             # If PID output is not available, stop the servo
-            p.ChangeDutyCycle(0)
+            #p.ChangeDutyCycle(0)
             sleep(1)  # Wait before retrying
 except KeyboardInterrupt:
-    p.stop()
+    #p.stop()
     GPIO.cleanup()
 #Resets the GPIO pins back to defaults
