@@ -8,7 +8,7 @@ def check_pin(pin_number):
     return pin_value
 
 if __name__ == "__main__":
-    pin_number = 6  # Replace with the GPIO pin number you want to check
+    pin_number = 6  # Replace with the GPIO pin you want to check
     try:
         pin_value = check_pin(pin_number)
         print(f"Pin {pin_number} is {'connected' if pin_value else 'not connected'}.")
