@@ -23,14 +23,24 @@ def updatePD():
     while True:
         x = random.randint(100, 300)
         #print("hi" + str(x))
-        for number in range(previous_number, x):
-            pid_error = 200 - number
-            #print(pid_error)
-            pid_output_scaled = pid_x.update(pid_error)
-            pid_output.value = pid_output_scaled
-            
+        if previous_number > 200:
+            for number in range(previous_number, 200, -1):
+                pid_error = 200 - number
+                #print(pid_error)
+                pid_output_scaled = pid_x.update(pid_error)
+                pid_output.value = pid_output_scaled
 
-            time.sleep(0.1)  # Small delay to observe changes
+
+                time.sleep(0.1)  # Small delay to observe changes
+        else:
+            for number in range(previous_number, 200):
+                pid_error = 200 - number
+                #print(pid_error)
+                pid_output_scaled = pid_x.update(pid_error)
+                pid_output.value = pid_output_scaled
+
+
+                time.sleep(0.1)  # Small delay to observe changes
         previous_number = x
 
 

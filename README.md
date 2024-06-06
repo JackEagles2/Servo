@@ -1,7 +1,7 @@
 # servo
 
 
-ssh servo@192.168.0.99
+ssh jacke@192.168.0.99
 
 Servo123 - password
 
