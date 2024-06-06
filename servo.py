@@ -1,55 +1,48 @@
-import RPi.GPIO as GPIO
-from time import sleep
-import requests  # Import the requests library to make HTTP requests
+from gpiozero import AngularServo
+from gpiozero.pins.pigpio import PiGPIOFactory
+import requests
+import time
+
+# Use pigpio pin factory
+factory = PiGPIOFactory()
 
 print("Setup")
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
-p = GPIO.PWM(11, 50)
-p.start(0)
+# Initialize the servo with the pigpio factory on GPIO pin 17 (physical pin 11)
+servo = AngularServo(17, min_pulse_width=0.0006, max_pulse_width=0.0023, pin_factory=factory)
 
-#GPIO.setmode(GPIO.BOARD)
-#GPIO.setup(11, GPIO.OUT)
-#p = GPIO.PWM(11, 50)
-#p.start(0)
 print("Starting")
 
 # Function to get PID controller output from endpoint
 def get_pid_output():
-    # Replace "PID_ENDPOINT_URL" with the actual endpoint URL
-    endpoint_url = "localhost:5000/get_pid_output"
+    endpoint_url = "http://127.0.0.1:5000/get_pid_output"
     try:
         response = requests.get(endpoint_url, timeout=5)
         if response.status_code == 200:
-            pid_output = float(response.json()['output'])  # Assuming the output is in JSON format
+            pid_output = float(response.json().get('output', 0.0))  # Default to 0.0 if 'output' is not found
             return pid_output
         else:
-            print("Error: Unable to fetch PID output - Status code:", response.status_code)
+            print(f"Error: Unable to fetch PID output - Status code: {response.status_code}")
             return None
-    except Exception as e:
-        print("Error:", e)
+    except requests.RequestException as e:
+        print(f"Error: {e}")
         return None
 
-try:
-    while True:
-        pid_output = get_pid_output()
-        print(pid_output)
-        if pid_output is not None:
-            # Scale the PID output to match servo PWM duty cycle range (0-100)
-            p.ChangeDutyCycle(pid_output)
-            scaled_output = pid_output * 10  # Adjust scaling factor as needed
+while True:
+    pid_output = get_pid_output()
+    print(f"PID Output: {pid_output}")
+    if pid_output is not None:
+        # Scale the PID output to match servo angle range (-50 to 50 degrees)
+        scaled_output = (pid_output + 6) / 12 * 100 - 50  # Adjust scaling factor as needed
 
-            # Ensure scaled output is within valid range
-            scaled_output = max(0, min(100, scaled_output))
+        # Ensure scaled output is within valid range
+        scaled_output = int(max(-50, min(50, scaled_output)))
+        print(f"Angle = {scaled_output}")
+        servo.angle = int(scaled_output)
+        time.sleep(0.5)
+    else:
+        # Move the servo to the middle position if there is no response
+        servo.angle = 0  # Middle position for standard servo
 
-            #p.ChangeDutyCycle(scaled_output)
-            sleep(0.1)  # Adjust sleep time as needed for responsiveness
-        else:
-            # If PID output is not available, stop the servo
-            #p.ChangeDutyCycle(0)
-            sleep(1)  # Wait before retrying
-except KeyboardInterrupt:
-    #p.stop()
-    GPIO.cleanup()
-#Resets the GPIO pins back to defaults
+    time.sleep(0.5)  # Adjust sleep time as needed for responsiveness
+

@@ -1,7 +1,3 @@
-import cv2
-import numpy as np
-from facenet_pytorch import MTCNN, InceptionResnetV1
-
 
 class PID:
     def __init__(self, Kp, Ki, Kd, target, min, max):

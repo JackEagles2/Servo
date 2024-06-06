@@ -13,7 +13,7 @@ max = x_center / 10
 range = max * 2
 
 pid_output = Value('d', 0.0)
-pid_x = pd(Kp=0.1, Ki=0, Kd=0.01, target=0, min=0, max=0)
+pid_x = pd(Kp=0.2, Ki=0, Kd=0.01, target=0, min=0, max=0)
 
 
 def updatePD():
@@ -22,9 +22,9 @@ def updatePD():
         # Get image
         e_time = time.time() % 40
         if e_time <= 20:
-            y = (720 / 20) * e_time
+            y = (360 / 20) * e_time
         else:
-            y = 720 - (720 / 20) * (e_time - 20)
+            y = 360 - (360 / 20) * (e_time - 20)
 
         #y = 360
 
@@ -35,7 +35,6 @@ def updatePD():
         pid_output_scaled = pid_x.update(pid_error) / max * 6 + max / 6
         pid_output.value = pid_output_scaled
 
-
 pid_process = multiprocessing.Process(target=updatePD)
 pid_process.start()
 # Endpoint to get PID output
@@ -45,4 +44,4 @@ def get_pid_output():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(port=5000)
