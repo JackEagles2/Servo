@@ -1,9 +1,9 @@
 # servo
 
-
+Raspberry Pi servo
 ssh jacke@192.168.0.99
 
-Servo123 - password
+Servo123 
 
 ![img.png](img.png)
 
